@@ -5,7 +5,14 @@ import LoginPage from "@/pages/auth/LoginPage";
 import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import DashboardPlaceholder from "@/pages/DashboardPlaceholder";
+import AppLayout from "@/components/layout/AppLayout";
+import DashboardPage from "@/pages/DashboardPage";
+import OrganizationsPage from "@/pages/OrganizationsPage";
+import DepartmentsPage from "@/pages/DepartmentsPage";
+import MembersPage from "@/pages/MembersPage";
+import AttendancePage from "@/pages/AttendancePage";
+import ReportsPage from "@/pages/ReportsPage";
+import SettingsPage from "@/pages/SettingsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,7 +37,16 @@ export default function App() {
 
           {/* Authenticated route checks nested inside ProtectedRoute */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<DashboardPlaceholder />} />
+            {/* Main Application shell layout */}
+            <Route element={<AppLayout />}>
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/organizations" element={<OrganizationsPage />} />
+              <Route path="/departments" element={<DepartmentsPage />} />
+              <Route path="/members" element={<MembersPage />} />
+              <Route path="/attendance" element={<AttendancePage />} />
+              <Route path="/reports" element={<ReportsPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Route>
           </Route>
 
           {/* System defaults redirection logic */}
