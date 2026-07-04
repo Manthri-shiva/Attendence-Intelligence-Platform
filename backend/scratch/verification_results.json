@@ -1,0 +1,21 @@
+{
+    "passed": [
+        "Security: Password stored securely as a strong hash in the database.",
+        "Security: Password fields excluded from login serialization.",
+        "Security: Password fields excluded from /me profile serialization.",
+        "Database: Uniqueness constraint verified on users(email).",
+        "API Validation: Incorrect payloads return HTTP 422 with wrapped envelopes.",
+        "Authorization: Unauthenticated requests to protected endpoints return HTTP 403.",
+        "Exception Handling: Service layer domain exceptions map successfully to HTTP 400.",
+        "Exception Handling: Service layer UserNotFoundError maps successfully to HTTP 404.",
+        "Documentation: Swagger/OpenAPI UI endpoint (/docs) resolves to 200 OK.",
+        "Performance: Response speeds are efficient (Avg: 13.74 ms)."
+    ],
+    "failed": [],
+    "warnings": [],
+    "performance": {
+        "avg_latency_ms": 13.74,
+        "min_latency_ms": 10.09,
+        "max_latency_ms": 16.96
+    }
+}

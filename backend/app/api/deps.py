@@ -1,13 +1,35 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.orm import Session
+from app.core.database import get_db
 from app.core.security import decode_access_token
-from app.services.user_repository import user_repo
 from app.models.user import User
+from app.repositories.user import UserRepository
+from app.services.user import UserService
+from app.services.auth import AuthService
 
 # Reusable security scheme for SPA applications utilizing Bearer Authentication tokens
 reusable_oauth2 = HTTPBearer(auto_error=True)
 
-def get_current_user(token_creds: HTTPAuthorizationCredentials = Depends(reusable_oauth2)) -> User:
+# 1. Database and Repository dependency providers
+def get_user_repository(db: Session = Depends(get_db)) -> UserRepository:
+    """Dependency injection provider for UserRepository."""
+    return UserRepository(db)
+
+# 2. Service dependency providers
+def get_user_service(user_repo: UserRepository = Depends(get_user_repository)) -> UserService:
+    """Dependency injection provider for UserService."""
+    return UserService(user_repo)
+
+def get_auth_service(user_repo: UserRepository = Depends(get_user_repository)) -> AuthService:
+    """Dependency injection provider for AuthService."""
+    return AuthService(user_repo)
+
+# 3. Authentication guard dependencies
+def get_current_user(
+    token_creds: HTTPAuthorizationCredentials = Depends(reusable_oauth2),
+    user_service: UserService = Depends(get_user_service)
+) -> User:
     """
     FastAPI dependency to extract JWT access token from headers, decode it,
     validate token signature, check expiration, and retrieve the authenticated user.
@@ -36,7 +58,7 @@ def get_current_user(token_creds: HTTPAuthorizationCredentials = Depends(reusabl
             detail="Token invalid: subject must be an integer ID",
         )
         
-    user = user_repo.get_by_id(user_id)
+    user = user_service.get_user_by_id(user_id)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

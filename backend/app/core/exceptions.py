@@ -39,6 +39,28 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content=response_content.model_dump()
     )
 
+from app.core.domain_exceptions import (
+    DomainException, UserNotFoundError, InvalidCredentialsError, InactiveUserError, TokenExpiredOrInvalidError
+)
+
+async def domain_exception_handler(request: Request, exc: DomainException) -> JSONResponse:
+    """
+    Format AIP domain exceptions raised by the service layer into envelopes.
+    """
+    status_code = status.HTTP_400_BAD_REQUEST
+    if isinstance(exc, UserNotFoundError):
+        status_code = status.HTTP_404_NOT_FOUND
+        
+    response_content = APIResponse(
+        success=False,
+        message=exc.message,
+        errors=[{"detail": exc.message, "type": exc.__class__.__name__}]
+    )
+    return JSONResponse(
+        status_code=status_code,
+        content=response_content.model_dump()
+    )
+
 async def generic_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """
     Format generic, uncaught exceptions into standard 500 APIResponse structures.
@@ -59,4 +81,6 @@ def setup_exception_handlers(app) -> None:
     """
     app.add_exception_handler(HTTPException, http_exception_handler)
     app.add_exception_handler(RequestValidationError, validation_exception_handler)
+    app.add_exception_handler(DomainException, domain_exception_handler)
     app.add_exception_handler(Exception, generic_exception_handler)
+

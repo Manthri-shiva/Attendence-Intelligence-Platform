@@ -18,7 +18,7 @@ def test_system_and_middleware():
     data = response.json()
     assert data["success"] is True
     assert data["data"]["status"] == "operational"
-    assert data["data"]["environment"]["database_connected"] is False
+    assert data["data"]["environment"]["database_connected"] is True
     
     print("\n--- 2. Testing Logging Middleware Latency Header ---")
     print(f"Response Headers: {dict(response.headers)}")
