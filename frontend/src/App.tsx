@@ -11,8 +11,10 @@ import OrganizationsPage from "@/pages/OrganizationsPage";
 import DepartmentsPage from "@/pages/DepartmentsPage";
 import MembersPage from "@/pages/MembersPage";
 import AttendancePage from "@/pages/AttendancePage";
+import VerificationPage from "@/pages/VerificationPage";
 import ReportsPage from "@/pages/ReportsPage";
 import SettingsPage from "@/pages/SettingsPage";
+import EvidencePage from "@/pages/EvidencePage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,7 +46,9 @@ export default function App() {
               <Route path="/departments" element={<DepartmentsPage />} />
               <Route path="/members" element={<MembersPage />} />
               <Route path="/attendance" element={<AttendancePage />} />
+              <Route path="/verify-attendance" element={<VerificationPage />} />
               <Route path="/reports" element={<ReportsPage />} />
+              <Route path="/evidence" element={<EvidencePage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Route>
           </Route>

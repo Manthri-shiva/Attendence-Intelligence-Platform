@@ -4,10 +4,11 @@ from app.schemas.user import UserResponse
 from app.api.deps import get_current_active_user, get_auth_service
 from app.services.auth import AuthService
 from app.models.user import User
+from app.core.rate_limit import rate_limit_login
 
 router = APIRouter()
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=TokenResponse, dependencies=[Depends(rate_limit_login)])
 def login(login_data: LoginRequest, auth_service: AuthService = Depends(get_auth_service)):
     """
     Verify user credentials and return a JWT access token along with user information.

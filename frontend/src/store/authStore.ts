@@ -5,8 +5,11 @@ export interface User {
   id: number;
   email: string;
   full_name: string;
-  role: 'SystemAdmin' | 'OrgAdmin' | 'Coordinator' | 'Member' | 'Auditor';
+  role: 'SystemAdmin' | 'OrgAdmin' | 'Coordinator' | 'Member' | 'Auditor' | 'Faculty' | 'Student';
   is_active: boolean;
+  organization_id?: number | null;
+  department_id?: number | null;
+  team_id?: number | null;
 }
 
 interface AuthState {

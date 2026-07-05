@@ -19,3 +19,15 @@ class InactiveUserError(DomainException):
 class TokenExpiredOrInvalidError(DomainException):
     """Raised when a token (JWT / Reset) is expired or malformed"""
     pass
+
+class ObjectNotFoundError(DomainException):
+    """Raised when a queried object is not found in the database (e.g. Org, Dept, Team)"""
+    pass
+
+class DuplicateRecordError(DomainException):
+    """Raised when creating a record with duplicate unique fields"""
+    pass
+
+class PermissionDeniedError(DomainException):
+    """Raised when a user attempts an action they do not have permissions for"""
+    pass

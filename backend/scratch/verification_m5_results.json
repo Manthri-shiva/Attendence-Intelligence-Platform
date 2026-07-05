@@ -1,0 +1,21 @@
+{
+    "passed": [
+        "Organizations: Create Organization as Super Admin success.",
+        "Organizations: Duplication check on name returns HTTP 400.",
+        "Organizations: Paginated List query returns correctly.",
+        "Organizations: Scoped visibility constraints enforced on OrgAdmin.",
+        "Departments: Create Department as OrgAdmin inside their own tenant.",
+        "Departments: Duplicate department names within the same organization rejected with 400.",
+        "Departments: Multi-tenant boundary checks reject department creation in other orgs with HTTP 403.",
+        "Teams: Create Team under department success.",
+        "Teams: Duplicate team name inside the same department rejected with HTTP 400.",
+        "Users: Phone number format constraint verified (raises HTTP 400 on alphanumeric strings).",
+        "Users: Create user with correct validations completes successfully.",
+        "Users: Hashed password is excluded from User response payload serialization.",
+        "Users: Deactivate user sets account status to Inactive successfully.",
+        "Users: Activate user restores active status successfully.",
+        "Audit Logs: Automated audit log writes verified successfully."
+    ],
+    "failed": [],
+    "warnings": []
+}

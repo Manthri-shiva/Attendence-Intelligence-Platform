@@ -7,8 +7,10 @@ class UserRole(str, enum.Enum):
     SystemAdmin = "SystemAdmin"
     OrgAdmin = "OrgAdmin"
     Coordinator = "Coordinator"
-    Member = "Member"
+    Faculty = "Faculty"
+    Student = "Student"
     Auditor = "Auditor"
+    Member = "Member"
 
 class User(Base):
     __tablename__ = "users"

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
+import { useToastStore } from '@/store/toastStore';
 import api from '@/services/api';
+import NotificationCenter from '@/components/layout/NotificationCenter';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -19,7 +21,8 @@ import {
   Shield,
   Menu,
   Server,
-  Activity
+  Activity,
+  ShieldCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -35,6 +38,7 @@ const navItems: NavItem[] = [
   { name: 'Departments', path: '/departments', icon: Briefcase },
   { name: 'Members', path: '/members', icon: Users },
   { name: 'Attendance', path: '/attendance', icon: CalendarCheck },
+  { name: 'Evidence', path: '/evidence', icon: ShieldCheck },
   { name: 'Reports', path: '/reports', icon: FileText },
   { name: 'Settings', path: '/settings', icon: Settings },
 ];
@@ -72,6 +76,7 @@ export default function AppLayout() {
   // Resolve current section title based on active path
   const currentItem = navItems.find((item) => location.pathname === item.path);
   const pageTitle = currentItem ? currentItem.name : 'AIP Portal';
+  const { toasts, removeToast } = useToastStore();
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-slate-950 font-sans">
@@ -197,8 +202,11 @@ export default function AppLayout() {
             </h1>
           </div>
 
-          {/* User Profile dropdown */}
-          <div className="relative">
+          <div className="flex items-center gap-4">
+            <NotificationCenter />
+
+            {/* User Profile dropdown */}
+            <div className="relative">
             <button
               onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
               onBlur={() => setTimeout(() => setProfileDropdownOpen(false), 200)}
@@ -239,7 +247,8 @@ export default function AppLayout() {
               </Card>
             )}
           </div>
-        </header>
+        </div>
+      </header>
 
         {/* Viewport content containing nested subpages */}
         <main className="flex-1 overflow-y-auto p-8 bg-slate-50 dark:bg-slate-950/20">
@@ -247,6 +256,29 @@ export default function AppLayout() {
             <Outlet />
           </div>
         </main>
+      </div>
+
+      {/* Floating Global Toasts Overlay */}
+      <div className="fixed bottom-5 right-5 z-[9999] flex flex-col gap-2.5 max-w-sm w-full">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            onClick={() => removeToast(toast.id)}
+            className={cn(
+              "flex items-start gap-3 p-4 rounded-2xl border shadow-xl cursor-pointer transition-all duration-300 animate-in slide-in-from-bottom-5 fade-in hover:scale-[1.02]",
+              toast.type === 'success'
+                ? "bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-950/90 dark:border-emerald-800 dark:text-emerald-200"
+                : toast.type === 'error'
+                ? "bg-rose-50 border-rose-200 text-rose-800 dark:bg-rose-950/90 dark:border-rose-800 dark:text-rose-200"
+                : "bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950/90 dark:border-blue-800 dark:text-blue-200"
+            )}
+          >
+            <div className="flex-1 text-sm font-bold leading-tight">
+              {toast.message}
+            </div>
+            <button className="text-xs font-black opacity-60 hover:opacity-100 transition-opacity">×</button>
+          </div>
+        ))}
       </div>
     </div>
   );

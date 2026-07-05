@@ -6844,4 +6844,151 @@ Special emphasis has been placed on documentation-first development to ensure cl
 
 ---
 
-# End of Master README (Version 1.0)
+# 🛠️ Technical Reference & Developer Quick-Start
+
+This section provides technical guidance for setting up, building, verifying, and deploying the Attendance Intelligence Platform (AIP) project.
+
+---
+
+## 🏗️ Folder Structure & Project Architecture
+
+```text
+Attendance-Platform/
+├── Attendence-Intelligence-Platform/
+│   ├── backend/
+│   │   ├── app/
+│   │   │   ├── api/          # Routers and endpoint handlers (v1)
+│   │   │   ├── core/         # Config settings, database connection, middleware, rate-limit
+│   │   │   ├── models/       # SQLAlchemy database models
+│   │   │   ├── repositories/ # Repository pattern CRUD classes
+│   │   │   ├── schemas/      # Pydantic request/response validation schemas
+│   │   │   └── services/     # AI, report, notification, and analytics services
+│   │   ├── alembic/          # Database schema migration files
+│   │   └── scratch/          # Verification scripts and test runners
+│   └── frontend/
+│       ├── src/
+│       │   ├── components/   # Layout elements (NotificationCenter)
+│       │   ├── pages/        # DashboardPage (SVG Charts), ReportsPage, VerificationPage (WebRTC)
+│       │   ├── services/     # Axios client configuration
+│       │   └── store/        # Zustand global state (Auth, Toasts)
+│       ├── package.json
+│       └── tailwind.config.js
+```
+
+---
+
+## ⚡ Environment Variables Config
+
+Create a `.env` file in the `backend/` directory referencing:
+
+```ini
+APP_NAME="Attendance Intelligence Platform"
+DEBUG=true
+PORT=8000
+HOST="0.0.0.0"
+
+# Database url
+DATABASE_URL="postgresql://postgres:[password]@localhost:5432/attendance_platform"
+
+# Security
+SECRET_KEY="your-super-cryptographic-secret-key-salt"
+ALGORITHM="HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+
+# AI Provider Thresholds
+AI_ENABLED=true
+AI_PROVIDER="mock"
+FACE_CONFIDENCE_THRESHOLD=0.8
+LIVENESS_THRESHOLD=0.5
+ALLOW_MANUAL_FALLBACK=true
+
+# Cache TTL Expiry (seconds)
+ANALYTICS_CACHE_EXPIRY=60
+```
+
+---
+
+## 🚀 Setting Up the Project
+
+### 1. Database Setup
+Ensure PostgreSQL 17 is running, then create the database:
+```sql
+CREATE DATABASE attendance_platform;
+```
+
+### 2. Backend Installation & Migrations
+1. Navigate to the `backend/` directory:
+   ```powershell
+   cd backend
+   ```
+2. Create and activate virtual environment:
+   ```powershell
+   python -m venv .venv
+   .venv\Scripts\activate
+   ```
+3. Install dependencies:
+   ```powershell
+   pip install -r requirements.txt
+   ```
+4. Run Alembic migrations:
+   ```powershell
+   alembic upgrade head
+   ```
+5. Seed initial organization data:
+   ```powershell
+   python scratch/seed_database.py
+   ```
+6. Run the FastAPI development server:
+   ```powershell
+   uvicorn app.main:app --reload --port 8000
+   ```
+
+### 3. Frontend Installation & Dev Run
+1. Navigate to the `frontend/` directory:
+   ```powershell
+   cd ../frontend
+   ```
+2. Install node dependencies:
+   ```bash
+   npm install
+   ```
+3. Launch Vite client:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 🧪 Running Verification Tests
+
+Run the following scripts from the `backend/` directory:
+
+- **Milestone 6 (Sessions CRUD):**
+  ```powershell
+  .venv\Scripts\python scratch\verify_milestone_6.py
+  ```
+- **Milestone 7 (AI Geofence & Liveness):**
+  ```powershell
+  .venv\Scripts\python scratch\verify_milestone_7.py
+  ```
+- **Milestone 8 (Reports, Analytics, Cache, Notifications):**
+  ```powershell
+  .venv\Scripts\python scratch\verify_milestone_8.py
+  ```
+
+---
+
+## 📦 Production Deployment Checklist
+
+1. **Security Settings:** Set `DEBUG=false` in environment variables. Rotate `SECRET_KEY` with a strong cryptographic password.
+2. **CORS Origins:** Exclude wildcard origins; explicitly declare domain routes under `BACKEND_CORS_ORIGINS`.
+3. **Database Migrations:** Run `alembic upgrade head` within CI/CD pipelines before deployment updates.
+4. **Vite Bundle Build:** Compile optimized client packages using:
+   ```bash
+   npm run build
+   ```
+5. **FastAPI Process Runner:** Run Uvicorn in production using multiple workers behind Gunicorn:
+   ```bash
+   gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app -b 0.0.0.0:8000
+   ```
+

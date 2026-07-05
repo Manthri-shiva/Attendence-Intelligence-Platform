@@ -40,7 +40,8 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 from app.core.domain_exceptions import (
-    DomainException, UserNotFoundError, InvalidCredentialsError, InactiveUserError, TokenExpiredOrInvalidError
+    DomainException, UserNotFoundError, InvalidCredentialsError, InactiveUserError,
+    TokenExpiredOrInvalidError, ObjectNotFoundError, DuplicateRecordError, PermissionDeniedError
 )
 
 async def domain_exception_handler(request: Request, exc: DomainException) -> JSONResponse:
@@ -48,8 +49,10 @@ async def domain_exception_handler(request: Request, exc: DomainException) -> JS
     Format AIP domain exceptions raised by the service layer into envelopes.
     """
     status_code = status.HTTP_400_BAD_REQUEST
-    if isinstance(exc, UserNotFoundError):
+    if isinstance(exc, (UserNotFoundError, ObjectNotFoundError)):
         status_code = status.HTTP_404_NOT_FOUND
+    elif isinstance(exc, PermissionDeniedError):
+        status_code = status.HTTP_403_FORBIDDEN
         
     response_content = APIResponse(
         success=False,
